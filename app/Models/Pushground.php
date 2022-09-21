@@ -26,11 +26,19 @@ class Pushground extends Model
 	}
 	
 	
-	public function getMetrics($startDate)
+	/**
+	 * It gets all the campaigns, then loops through them and gets the stats for each campaign
+	 *
+	 * @param startDate The date you want to get the metrics for.
+	 *
+	 * @return array An array of campaign stats.
+	 */
+	public function getMetrics($startDate): array
 	{
 		$campaigns = $this->getAllCampaigns()->object();
 		
 		$campaignStats = [];
+		
 		foreach ($campaigns as $i => $campaign) {
 			$stats = Http::withHeaders([
 				'Authorization' => $this->apiKey,
@@ -46,24 +54,22 @@ class Pushground extends Model
 			];
 		}
 		
-		dd($campaignStats);
+		return $campaignStats;
 	}
 	
 	/**
 	 * It creates an API key for the user.
 	 *
-	 * @return The API key is being returned.
+	 * @return An array with the key and the token.
 	 */
 	public function createApiKey()
 	{
-		$data = Http::withOptions([
+		return Http::withOptions([
 			'verify' => false
 		])->post($this->url . '/advertisers/key', [
 			'email'    => $this->email,
 			'password' => $this->password,
-		]);
-		
-		return $data->json();
+		])->json();
 	}
 	
 	/**
@@ -71,7 +77,7 @@ class Pushground extends Model
 	 *
 	 * @return \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response array of all campaigns.
 	 */
-	public function getAllCampaigns()
+	public function getAllCampaigns(): \GuzzleHttp\Promise\PromiseInterface|\Illuminate\Http\Client\Response
 	{
 		return Http::withHeaders([
 			'Authorization' => $this->apiKey,
