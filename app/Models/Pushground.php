@@ -18,7 +18,7 @@ class Pushground extends Model
 	
 	public function __construct()
 	{
-		$this->providerId = env('API_PUSHGROUND_PROVIDER_ID');
+		$this->providerId = intval(env('API_PUSHGROUND_PROVIDER_ID', 0));
 		$this->url        = env('API_PUSHGROUND_URL');
 		$this->apiKey     = env('API_PUSHGROUND_APIKEY');
 		$this->email      = env('API_PUSHGROUND_EMAIL');
