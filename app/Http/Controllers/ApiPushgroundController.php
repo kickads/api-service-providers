@@ -7,6 +7,7 @@ use App\Models\Pushground;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class ApiPushgroundController extends Controller
@@ -97,23 +98,9 @@ class ApiPushgroundController extends Controller
 		
 		$date = $request->date ?? date('Y-m-d', strtotime('yesterday'));
 		
-		$campaignData = (new Pushground)->getMetrics($date);
+		$campaigns = (new Pushground)->saveDataInDb($date);
 		
-		foreach ($campaignData as $i => $campaign) {
-			DailyReport::updateOrCreate(
-				[
-					'providers_id' => 1126,
-					'date'         => $date,
-				],
-				[
-					'providers_id' => 1126,
-					'date'         => $date,
-					'clics'        => $campaign[ 'metrics' ]->clicks,
-					'imp'          => $campaign[ 'metrics' ]->deliveries,
-					'spend'        => $campaign[ 'metrics' ]->cost,
-				]);
-		}
-		
+		return response($campaigns, Response::HTTP_OK);
 	}
 	
 }

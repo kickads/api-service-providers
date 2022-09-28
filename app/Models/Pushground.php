@@ -89,11 +89,24 @@ class Pushground extends Model
 	
 	public function saveDataInDb($date)
 	{
-//		dd($this->getMetrics($date));
-		$this->updateOrCreate([
-			'date'  => $date,
-			'clics' => 100,
-		]);
+		$campaignData = $this->getMetrics($date);
+		
+		foreach ($campaignData as $i => $campaign) {
+			DailyReport::updateOrCreate(
+				[
+					'providers_id' => 1126,
+					'date'         => $date,
+				],
+				[
+					'providers_id' => 1126,
+					'date'         => $date,
+					'clics'        => $campaign[ 'metrics' ]->clicks,
+					'imp'          => $campaign[ 'metrics' ]->deliveries,
+					'spend'        => $campaign[ 'metrics' ]->cost,
+				]);
+		}
+		
+		return $campaignData;
 	}
 	
 	public function downloadInfo($date = null)
