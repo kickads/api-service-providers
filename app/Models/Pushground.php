@@ -15,6 +15,7 @@ class Pushground extends Model
 	private string $apiKey;
 	private string $email;
 	private string $password;
+	protected      $fillable = ['date', 'clics'];
 	
 	public function __construct()
 	{
@@ -86,51 +87,18 @@ class Pushground extends Model
 		])->get($this->url . '/advertisers/campaigns');
 	}
 	
+	public function saveDataInDb($date)
+	{
+//		dd($this->getMetrics($date));
+		$this->updateOrCreate([
+			'date'  => $date,
+			'clics' => 100,
+		]);
+	}
+	
 	public function downloadInfo($date = null)
 	{
-		if (isset($_GET[ 'date' ])) {
-			$date = $_GET[ 'date' ];
-		} else {
-			if (is_null($date))
-				$date = date('Y-m-d', strtotime('yesterday'));
-		}
-		
-		//GET Dates
-		$dateTable = date("Ymd", strtotime($date));
-		$convTable = "conv_log_storage_" . $dateTable;
-		
-		$startDate = date('Y-m-d', strtotime($date));
-		
-		//GET All campaigns
-		$url               = $this->url . "advertisers/campaigns";
-		$campaignsResponse = $this->request($url);
-		if (!$campaignsResponse) {
-//			echo 'No campaignsResponse';
-			return 1;
-		}
-		
-		$campaigns = array();
-		foreach ($campaignsResponse as $key => $campaign) {
-			$campaigns[ $campaign->id ][ "pushgroundId" ]   = $campaign->id;
-			$campaigns[ $campaign->id ][ "pushgroundName" ] = $campaign->name;
-		}
-		
-		//GET CampaignStats single campaign request
-		foreach ($campaigns as $pid => $values) {
-			$url              = $this->url . "advertisers/stats/?dateStart=" . $startDate . "&dateEnd=" . $startDate . "&dimensions=campaign&campaigns=" . $pid . "&timeZone=UTC";
-			$apiCampaignStats = $this->request($url);
-			if (!$apiCampaignStats) {
-//				echo 'No CampaignStats for pushground campaignId';
-				continue;
-			}
-			
-			if (isset($campaigns[ $apiCampaignStats->leafs[ 0 ]->dimensions->campaign ])) {
-				$campaigns[ $apiCampaignStats->leafs[ 0 ]->dimensions->campaign ][ "cost" ]       = $apiCampaignStats->leafs[ 0 ]->metrics->cost;
-				$campaigns[ $apiCampaignStats->leafs[ 0 ]->dimensions->campaign ][ "clicks" ]     = $apiCampaignStats->leafs[ 0 ]->metrics->clicks;
-				$campaigns[ $apiCampaignStats->leafs[ 0 ]->dimensions->campaign ][ "deliveries" ] = $apiCampaignStats->leafs[ 0 ]->metrics->deliveries;
-			}
-		}
-		
+		$campaigns = null;
 		//Save CampaignStats
 		foreach ($campaigns as $cid => $campaignData) {
 			if (!isset($campaignData[ "clicks" ])) { // if no clicks dismiss campaign
@@ -160,6 +128,7 @@ class Pushground extends Model
 			$dailyReport->clics        = $campaignData[ "clicks" ];
 			$dailyReport->spend        = round($campaignData[ "cost" ], 3);
 			
+//			Todo: De aca para abajo falta.
 			$criteriaConv = new CDbCriteria;
 			$criteriaConv->compare('t.campaign_id', $campaignID);
 			$criteriaConv->select = array('COUNT(t.id) as convs');
@@ -169,6 +138,7 @@ class Pushground extends Model
 			$dailyReport->conv_api = $convs ? $convs : 0;
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
+			
 			if (!$dailyReport->save()) {
 				Yii::log("Can't save campaign: '" . $campaignData[ "pushgroundName" ] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.pushground');
 				continue;

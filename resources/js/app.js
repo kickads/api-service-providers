@@ -1,8 +1,6 @@
 const $buttons  = document.querySelectorAll('.btnTooltip');
 const $tooltips = document.querySelectorAll('.tooltip');
 
-console.log($tooltips);
-
 $buttons.forEach((btn, i) => {
 	btn.addEventListener('click', e => {
 		const url = e.currentTarget.getAttribute('data-url');

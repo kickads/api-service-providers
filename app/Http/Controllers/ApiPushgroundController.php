@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DailyReport;
 use App\Models\Pushground;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ApiPushgroundController extends Controller
 {
@@ -37,7 +39,7 @@ class ApiPushgroundController extends Controller
 		}
 	}
 	
-
+	
 	/**
 	 * It creates an API key and returns it as a JSON response
 	 *
@@ -85,6 +87,33 @@ class ApiPushgroundController extends Controller
 				'Line'      => $e->getLine(),
 			]);
 		}
+	}
+	
+	public function save(Request $request)
+	{
+		$request->validate([
+			'date' => 'date_format:Y-m-d'
+		]);
+		
+		$date = $request->date ?? date('Y-m-d', strtotime('yesterday'));
+		
+		$campaignData = (new Pushground)->getMetrics($date);
+		
+		foreach ($campaignData as $i => $campaign) {
+			DailyReport::updateOrCreate(
+				[
+					'providers_id' => 1126,
+					'date'         => $date,
+				],
+				[
+					'providers_id' => 1126,
+					'date'         => $date,
+					'clics'        => $campaign[ 'metrics' ]->clicks,
+					'imp'          => $campaign[ 'metrics' ]->deliveries,
+					'spend'        => $campaign[ 'metrics' ]->cost,
+				]);
+		}
+		
 	}
 	
 }

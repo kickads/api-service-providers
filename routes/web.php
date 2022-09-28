@@ -23,4 +23,5 @@ Route::controller(ApiPushgroundController::class)->prefix('/apiUpdate/pushground
 	Route::get('', 'index');
 	Route::get('/apikey', 'createApiKey');
 	Route::get('/metrics', 'getMetrics');
+	Route::get('/saveMetrics', 'save');
 });
