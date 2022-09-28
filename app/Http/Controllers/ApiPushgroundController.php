@@ -2,30 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DailyReport;
+use App\Http\Requests\DatePushgroundRequest;
 use App\Models\Pushground;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 
 class ApiPushgroundController extends Controller
 {
 	/**
 	 * It validates the date input, sets the date to yesterday if no date is provided, and then gets all campaigns from Pushground for that date
 	 *
-	 * @param Request $request
+	 * @param DatePushgroundRequest $request
 	 * @return JsonResponse
 	 */
-	public function index(Request $request)
+	public function index(DatePushgroundRequest $request)
 	{
 		try {
-			$request->validate([
-				'date' => 'date_format:Y-m-d'
-			]);
-			
-			$date = $request->date ?? date('Y-m-d', strtotime('yesterday'));
+			$date = $request->get('date');
 			
 			$campaigns = (new Pushground)->getAllCampaigns($date)->json();
 			
@@ -65,17 +59,13 @@ class ApiPushgroundController extends Controller
 	/**
 	 * It takes a date in the format of `Y-m-d` and returns the metrics for that date
 	 *
-	 * @param Request $request
+	 * @param DatePushgroundRequest $request
 	 * @return JsonResponse metrics for the date specified.
 	 */
-	public function getMetrics(Request $request)
+	public function getMetrics(DatePushgroundRequest $request)
 	{
 		try {
-			$request->validate([
-				'date' => 'date_format:Y-m-d'
-			]);
-			
-			$date = $request->date ?? date('Y-m-d', strtotime('yesterday'));
+			$date = $request->get('date');
 			
 			$metrics = (new Pushground)->getMetrics($date);
 			
@@ -90,13 +80,9 @@ class ApiPushgroundController extends Controller
 		}
 	}
 	
-	public function save(Request $request)
+	public function save(DatePushgroundRequest $request)
 	{
-		$request->validate([
-			'date' => 'date_format:Y-m-d'
-		]);
-		
-		$date = $request->date ?? date('Y-m-d', strtotime('yesterday'));
+		$date = $request->get('date');
 		
 		$campaigns = (new Pushground)->saveDataInDb($date);
 		
