@@ -34,4 +34,18 @@ class DailyReportResource extends JsonResource
 			'eCPA'               => $this->eCPA,
 		];
 	}
+	
+	/**
+	 * Return an array of data to be made available to the view.
+	 *
+	 * @param request $request The incoming request.
+	 *
+	 * @return array The status of the request.
+	 */
+	public function with($request): array
+	{
+		return [
+			'status' => 'success'
+		];
+	}
 }

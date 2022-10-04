@@ -29,5 +29,6 @@ Route::controller(PushgroundController::class)->prefix('provider/pushground')->g
 
 Route::controller(DailyReportController::class)->prefix('dailyReport')->group(function () {
 	Route::get('', 'index');
-	Route::get('/{daily_report}', 'show');
+	Route::get('/{id}', 'show');
+	Route::delete('/{id}', 'destroy');
 });
