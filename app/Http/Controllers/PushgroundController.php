@@ -8,7 +8,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
-class ApiPushgroundController extends Controller
+class PushgroundController extends Controller
 {
 	/**
 	 * It validates the date input, sets the date to yesterday if no date is provided, and then gets all campaigns from Pushground for that date

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\V1\DailyReportController;
+use App\Http\Controllers\PushgroundController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,5 +17,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+	return $request->user();
+});
+
+Route::controller(PushgroundController::class)->prefix('provider/pushground')->group(function () {
+	Route::get('', 'index');
+	Route::get('/apikey', 'createApiKey');
+	Route::get('/metrics', 'getMetrics');
+	Route::get('/saveMetrics', 'save');
+});
+
+Route::controller(DailyReportController::class)->prefix('dailyReport')->group(function () {
+	Route::get('', 'index');
+	Route::get('/{daily_report}', 'show');
 });

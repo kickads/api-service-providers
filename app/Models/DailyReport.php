@@ -9,11 +9,10 @@ class DailyReport extends Model
 {
 	use HasFactory;
 	
-	protected $fillable = ['clics', 'imp', 'spend', 'date', 'providers_id'];
-	
-	protected $collection = "daily_report";
-	protected $table      = "daily_report";
-	public    $timestamps = false;
+	protected string $collection = "daily_report";
+	protected        $table      = "daily_report";
+	protected        $fillable   = ['clics', 'imp', 'spend', 'date', 'providers_id'];
+	public           $timestamps = false;
 	
 	/**
 	 * [updateRevenue description]

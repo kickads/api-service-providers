@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ApiPushgroundController;
+use App\Http\Controllers\PushgroundController;
 use App\Http\Controllers\ApiUpdateController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,13 +15,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-	return view('welcome');
-});
+//Route::get('/', function () {
+//	return view('welcome');
+//});
 
-Route::controller(ApiPushgroundController::class)->prefix('/apiUpdate/pushground')->group(function () {
-	Route::get('', 'index');
-	Route::get('/apikey', 'createApiKey');
-	Route::get('/metrics', 'getMetrics');
-	Route::get('/saveMetrics', 'save');
-});
+//Route::controller(PushgroundController::class)->prefix('/apiUpdate/pushground')->group(function () {
+//	Route::get('', 'index');
+//	Route::get('/apikey', 'createApiKey');
+//	Route::get('/metrics', 'getMetrics');
+//	Route::get('/saveMetrics', 'save');
+//});

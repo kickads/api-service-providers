@@ -140,7 +140,7 @@ class Pushground extends Model
 			$dailyReport->imp          = $campaignData[ "deliveries" ];
 			$dailyReport->clics        = $campaignData[ "clicks" ];
 			$dailyReport->spend        = round($campaignData[ "cost" ], 3);
-			
+
 //			Todo: De aca para abajo falta.
 			$criteriaConv = new CDbCriteria;
 			$criteriaConv->compare('t.campaign_id', $campaignID);
